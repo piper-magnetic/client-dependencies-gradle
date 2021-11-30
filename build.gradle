@@ -1,32 +1,28 @@
 import groovy.io.FileType
 
-buildscript {
-    repositories {
-        maven {
-            url 'https://plugins.gradle.org/m2/'
-        }
-    }
-    dependencies {
-        classpath 'com.gradle.publish:plugin-publish-plugin:0.18.0'
-    }
-}
+plugins {
+    id "com.gradle.plugin-publish" version "0.18.0"
 
-apply plugin: 'groovy'
-apply plugin: 'maven-publish'
-apply plugin: 'idea'
-apply plugin: 'codenarc'
-apply plugin: 'com.gradle.plugin-publish'
-
-ext {
-    artifactId = 'client-dependencies-g7'
-    githubUrl = 'https://github.com/piper-magnetic/client-dependencies-gradle'
+    id "groovy"
+    id "maven-publish"
+    id "signing"
+    id "codenarc"
+    id "idea"
+    id "project-report"
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group = 'com.magnetichq'
+defaultTasks 'clean', 'build'
+
 version = '2.0.0'
+group = 'com.magnetichq'
+
+ext {
+    artifactId = 'client-dependencies-g7'
+    githubUrl = 'https://github.com/piper-magnetic/client-dependencies-gradle'
+}
 
 repositories {
     jcenter()
@@ -110,6 +106,10 @@ pluginBundle {
             displayName = 'Client Dependencies Plugin G7'
         }
     }
+    mavenCoordinates {
+        groupId = 'com.magnetichq'
+        artifactId = project.artifactId
+    }
 }
 
 task fixResourcePaths() {
@@ -127,6 +127,10 @@ task fixResourcePaths() {
         }
 
     }
+}
+
+signing {
+    sign configurations.archives
 }
 
 processTestResources.finalizedBy 'fixResourcePaths'
