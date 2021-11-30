@@ -7,8 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.4'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.18.0'
     }
 }
 
@@ -17,32 +16,35 @@ apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'codenarc'
 apply plugin: 'com.gradle.plugin-publish'
-apply plugin: 'com.jfrog.bintray'
 
 ext {
-    artifactId = 'client-dependencies'
-    githubUrl = 'https://github.com/craigburke/client-dependencies-gradle'
+    artifactId = 'client-dependencies-g7'
+    githubUrl = 'https://github.com/piper-magnetic/client-dependencies-gradle'
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-group = 'com.craigburke.gradle'
-version = '1.4.1'
+group = 'com.magnetichq'
+version = '2.0.0'
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile localGroovy()
-    compile gradleApi()
-    compile 'org.codehaus.gpars:gpars:1.2.1'
-    compile 'org.ajoberstar:grgit:1.5.0'
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.3') {
+    implementation localGroovy()
+    implementation gradleApi()
+    // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r'
+    implementation 'org.codehaus.gpars:gpars:1.2.1'
+    implementation 'org.ajoberstar:grgit:1.5.0'
+    testImplementation('org.spockframework:spock-core:2.0-groovy-3.0') {
+        exclude module: 'junit-dep'
         exclude module: 'groovy-all'
     }
-    testCompile 'com.github.tomakehurst:wiremock:1.58:standalone'
+    testImplementation 'com.github.tomakehurst:wiremock:1.58:standalone'
+    testImplementation 'junit:junit:4.13'
 }
 
 codenarc {
@@ -74,37 +76,14 @@ publishing {
                     }
                     developers {
                         developer {
-                            id 'craigburke'
-                            name 'Craig Burke'
-                            email 'craig@craigburke.com'
+                            id 'piper-magnetic'
+                            name 'Piper Horscroft'
+                            email 'david@magnetichq.com'
                         }
                     }
                 }
             }
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
-    key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
-    publications = ['maven']
-    publish = true
-
-    pkg {
-        repo = 'gradle'
-        userOrg = 'craigburke'
-        name = project.artifactId
-        githubRepo = 'craigburke/client-dependencies-gradle'
-        githubReleaseNotesFile = 'README.adoc'
-        version {
-            mavenCentralSync {
-                user = project.hasProperty('mavenCentralUsername') ? project.mavenCentralUsername : ''
-                password = project.hasProperty('mavenCentralPassword') ? project.mavenCentralPassword : ''
-            }
         }
     }
 }
@@ -122,13 +101,13 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 pluginBundle {
     website = project.githubUrl
     vcsUrl = project.githubUrl
-    description = 'Install client side dependencies from NPM or Bower by declaring dependencies in build.gradle.'
+    description = 'Install client side dependencies from NPM or Bower by declaring dependencies in build.gradle, updated for Gradle 7.x.'
     tags = ['npm', 'bower', 'client', 'web']
 
     plugins {
         clientDependencies {
-            id = 'com.craigburke.client-dependencies'
-            displayName = 'Client Dependencies Plugin'
+            id = 'com.magnetichq.client-dependencies'
+            displayName = 'Client Dependencies Plugin G7'
         }
     }
 }
@@ -152,8 +131,4 @@ task fixResourcePaths() {
 
 processTestResources.finalizedBy 'fixResourcePaths'
 
-task('release', dependsOn: ['bintrayUpload', 'publishPlugins'])
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
-}
+task('release', dependsOn: ['publishPlugins'])

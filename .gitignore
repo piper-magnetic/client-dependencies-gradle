@@ -6,3 +6,5 @@ build
 *.iws
 **/.DS_Store
 atlassian-ide-plugin.xml
+.vscode/
+bin/
