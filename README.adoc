@@ -13,30 +13,17 @@ endif::[]
 This Gradle plugin allows you to declare client side dependencies in *build.gradle* from bower, npm, yarn or git and
 with a much clearer dependencies resolution model. This plugin queries the registries directly so it doesn't require or install node, npm or bower.
 
+The original plugin was not compatible with Gradle versions 3 or higher due to a breaking change in the String wrapping packages.
+It has been updated and pushed to the Gradle Plugin repository for usage.
+
 == Getting Started
 
-=== Gradle 2.0
-
-[source,gradle,subs='attributes']
-----
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.craigburke.gradle:client-dependencies:{version}'
-    }
-}
-
-apply plugin: 'com.craigburke.client-dependencies'
-----
-
-=== Gradle 2.1 and higher
+=== Gradle 3 and higher
 
 [source,gradle,subs='attributes']
 ----
 plugins {
-    id 'com.craigburke.client-dependencies' version '{version}'
+    id "com.magnetichq.client-dependencies" version "2.0.0"
 }
 ----
 
